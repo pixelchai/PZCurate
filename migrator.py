@@ -1,5 +1,3 @@
-import os
-
 import db
 
 def migrate(session):
@@ -9,7 +7,10 @@ def migrate(session):
         print("Fatal error: Database version information is absent!")
         return
 
-    if current_version != db.VERSION:
+    if current_version > db.VERSION:
+        print("Error: Invalid database version: existing={}, latest={}."
+              .format(current_version, db.VERSION))
+    elif current_version < db.VERSION:
         print("Outdated database version: existing={}, latest={}. Attempting migration."
               .format(current_version, db.VERSION))
         # TODO

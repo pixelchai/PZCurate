@@ -1,6 +1,7 @@
 .idea/
 /venv/
 **/.fuse_hidden*
+__pycache__/
 
 # project specific
 data.db
