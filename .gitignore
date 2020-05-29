@@ -1,0 +1,6 @@
+.idea/
+/venv/
+**/.fuse_hidden*
+
+# project specific
+data.db
