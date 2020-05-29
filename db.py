@@ -34,7 +34,7 @@ if __name__ == '__main__':
     Session = sessionmaker()
 
     database_path = "data.db"
-    engine = create_engine('sqlite:///' + database_path, echo=True)
+    engine = create_engine('sqlite:///' + database_path, echo=False)
 
     Session.configure(bind=engine)
     session = Session()
