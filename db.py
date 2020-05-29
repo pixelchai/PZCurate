@@ -20,7 +20,6 @@ class Tag(Base):
     __tablename__ = "Tags"
     id = Column(Integer, primary_key=True)
     name = Column(String, default="unnamed")
-    items = relationship("Item", secondary=item_tags, back_populates="tags")
 
 class Item(Base):
     __tablename__ = "Items"
@@ -29,7 +28,7 @@ class Item(Base):
     path = Column(String, nullable=False)
     timestamp = Column(Float)
     file_timestamp = Column(Float)
-    tags = relationship("Tag", secondary=item_tags, back_populates="items")
+    tags = relationship("Tag", secondary=item_tags)
 
 if __name__ == '__main__':
     Session = sessionmaker()
