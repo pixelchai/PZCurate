@@ -4,7 +4,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
 Base = declarative_base()
-VERSION = 1
+VERSION = 2
 
 class InternalMeta(Base):
     __tablename__ = "InternalMeta"
@@ -35,5 +35,8 @@ if __name__ == '__main__':
     if not os.path.isfile(database_path):
         Base.metadata.create_all(engine)
         session.merge(InternalMeta(id=1))
+    else:
+        from migrator import migrate
+        migrate(session)
 
     session.commit()
