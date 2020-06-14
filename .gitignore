@@ -5,3 +5,4 @@ __pycache__/
 
 # project specific
 data.db
+data.db-journal

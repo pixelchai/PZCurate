@@ -2,6 +2,9 @@ import os
 from sqlalchemy import create_engine, Column, Integer, String, Float, Enum, ForeignKey, Table, JSON
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, relationship
+from sqlalchemy import event
+from sqlalchemy.engine import Engine
+from sqlite3 import Connection as SQLite3Connection
 
 Base = declarative_base()
 VERSION = 0
@@ -43,13 +46,20 @@ class Item(Base):
     timestamp = Column(Float)
     file_timestamp = Column(Float)
 
+@event.listens_for(Engine, "connect")
+def _set_sqlite_pragma(dbapi_connection, connection_record):
+    # https://stackoverflow.com/a/15542046/5013267
+    if isinstance(dbapi_connection, SQLite3Connection):
+        cursor = dbapi_connection.cursor()
+        cursor.execute("PRAGMA foreign_keys=ON;")
+        cursor.close()
+
 if __name__ == '__main__':
     Session = sessionmaker()
 
     database_path = "data.db"
     database_existed = os.path.isfile(database_path)
     engine = create_engine('sqlite:///' + database_path, echo=True)
-    engine.execute("PRAGMA foreign_keys=ON")
 
     Session.configure(bind=engine)
     session = Session()
