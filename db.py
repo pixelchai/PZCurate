@@ -26,7 +26,7 @@ class TagDef(Base):
     library_id = Column(Integer, ForeignKey("Libraries.id", ondelete="CASCADE"))
     name = Column(String, default="unnamed")
     constraints = Column(JSON)
-    items = relationship("TagAss")
+    assignments = relationship("TagAss")
 
 class TagAss(Base):
     __tablename__ = "TagAsses"
@@ -35,6 +35,7 @@ class TagAss(Base):
     def_id = Column(Integer, ForeignKey("TagDefs.id", ondelete="CASCADE"))
     item_id = Column(Integer, ForeignKey("Items.id", ondelete="CASCADE"))
     value = Column(String)
+    source = Column(String, default="user")
     item = relationship("Item")
 
 class Item(Base):
@@ -45,6 +46,7 @@ class Item(Base):
     path = Column(String, nullable=False)
     timestamp = Column(Float)
     file_timestamp = Column(Float)
+    source = Column(String, default="user")
 
 @event.listens_for(Engine, "connect")
 def _set_sqlite_pragma(dbapi_connection, connection_record):
@@ -72,3 +74,27 @@ if __name__ == '__main__':
         migrate(session)
 
     session.commit()
+
+    if False:
+        # test objects set up
+        l = Library()
+        session.add(l)
+        session.flush()
+
+        i = Item(library_id=l.id, path="bruh")
+        session.add(i)
+        session.flush()
+
+        d = TagDef(library_id=l.id, name="Cool", constraints={
+            "test": {
+                "one": "ein",
+                "two": "zwei"
+            },
+            "fruit": ["apple", "pear", "mangooo"]
+        })
+        session.add(d)
+        session.flush()
+
+        a = TagAss(library_id=l.id, def_id=d.id, item_id=i.id)
+        session.add(a)
+        session.commit()
