@@ -1,5 +1,7 @@
 import enum
 import os
+import random
+
 from sqlalchemy import create_engine, Column, Integer, String, Float, ForeignKey, Enum
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, relationship
@@ -23,9 +25,10 @@ class Library(Base):
     # path, etc
 
 class TagType(enum.Enum):
-    STR = 0
-    INT = 1
-    FLOAT = 2
+    LABEL = 0
+    STR = 1
+    INT = 2
+    FLOAT = 3
 
 class TagDef(Base):
     __tablename__ = "TagDefs"
@@ -87,19 +90,57 @@ if __name__ == '__main__':
         session.add(l)
         session.flush()
 
-        i = Item(library_id=l.id, path="bruh")
-        session.add(i)
-        session.flush()
+        # items
+        for i in range(20):
+            item = Item(library_id=l.id, path="bruh_{:03d}".format(i))
+            session.add(item)
+            session.flush()
 
-        d = TagDef(library_id=l.id, name="Cool", tag_type=TagType.INT)
+        # TagDefs
+        d = TagDef(library_id=l.id, name="art", tag_type=TagType.LABEL)
+        session.add(d)
+
+        d = TagDef(library_id=l.id, name="genre", tag_type=TagType.STR)
+        session.add(d)
+
+        d = TagDef(library_id=l.id, name="rating", tag_type=TagType.INT)
+        session.add(d)
+
+        d = TagDef(library_id=l.id, name="ratio", tag_type=TagType.FLOAT)
         session.add(d)
         session.flush()
 
-        p = [10, 100, 16]
-        for val in p:
-            a = TagAss(library_id=l.id, def_id=d.id, item_id=i.id, value=str(val))
+        # TagAsses
+        # ratings
+        ratings = [1, 2, 3, 4, 5]*(20//5)
+        for i, val in enumerate(ratings):
+            a = TagAss(library_id=l.id, def_id=3, item_id=i+1, value=str(val))
+            session.add(a)
+        session.flush()
+
+        # arts
+        sel = list(range(1, 20+1))
+        random.shuffle(sel)
+        for i in sel[:8]:
+            a = TagAss(library_id=1, def_id=1, item_id=i)
+            session.add(a)
+        session.flush()
+
+        # ratios
+        random.shuffle(sel)
+        for i in sel[:5]:
+            a = TagAss(library_id=1, def_id=4, item_id=i, value=str(random.random()))
+            session.add(a)
+        session.flush()
+
+        genres = ["rock", "block", "jazz", "blues", "wow"]
+        random.shuffle(sel)
+        for i in sel[:10]:
+            a = TagAss(library_id=1, def_id=2, item_id=i, value=random.choice(genres))
             session.add(a)
         session.commit()
 
-    q = lang.Querier(session, 1).query("Cool>5 Cool>3")
+
+
+    q = lang.Querier(session, 1).query("")
     print(str(q))

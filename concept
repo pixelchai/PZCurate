@@ -1,18 +1,3 @@
-art time<=yesterday genre=roc% rating>3
-=> session.query(TagAss).filter(
-        TagAss.def_id == {def id for art}
-    ).filter(
-        TagAss.timestamp <= {eval: yesterday}
-    ).filter(
-        and_(TagAss.def_id == {def id for genre}, TagAss.value.like("roc%"))
-    ).filter(
-        and_(TagAss.def_id == {def id for rating}, cast(TagAss.value, {TagDef with def_id for rating's type (Integer|String|Float)}) > 3)
-    )
+art genre=roc% rating>3
 
-art time<=yesterday genre="thing with spaces >=" rating>3
-
-// NB: RHS only literals for now
-//     i.e, No time<=release_date*2
-//          or rating >= 5/2
-
-// Actually: implement 'time' special case later
+SELECT Items FROM
