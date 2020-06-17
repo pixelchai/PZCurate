@@ -32,8 +32,11 @@ class Querier:
                                                                  db.TagDef.name == lhs)):
             return db.TagAss.def_id == tag_def.id  # return the first one
 
-    def _add_filter(self, base_query, lhs, operator, rhs):
-        return and_(self._get_id_clause(self.library_id))
+    def _get_filter(self, lhs, operator, rhs):
+        id_clause = self._get_id_clause(lhs)
+
+        if operator is None and rhs is None:
+            return id_clause
 
     def query(self, exp: str):
         """
@@ -41,7 +44,8 @@ class Querier:
         """
         base_query = self.session.query(db.TagAss)
         for sub_exp in self.lex(exp):
-            self._add_filter(base_query, *sub_exp)
+            base_query = base_query.filter(self._get_filter(*sub_exp))
+        return base_query
 
 # query("art  time<=yesterday genre=roc% rating>3")
 # q = Querier(None, None)

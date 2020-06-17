@@ -103,4 +103,4 @@ if __name__ == '__main__':
             session.add(a)
         session.commit()
 
-    lang.query(session, 1, "Cool")
+    q = lang.Querier(session, 1).query("Cool")
