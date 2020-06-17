@@ -1,4 +1,3 @@
 sqlalchemy
-lark-parser
 pyqt5
 qtpy

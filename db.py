@@ -1,12 +1,11 @@
 import os
-import json
-from sqlalchemy import create_engine, Column, Integer, String, Float, Enum, ForeignKey, Table, JSON
+from sqlalchemy import create_engine, Column, Integer, String, Float, ForeignKey, JSON
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, relationship
 from sqlalchemy import event
 from sqlalchemy.engine import Engine
 from sqlite3 import Connection as SQLite3Connection
-import lang.parser as lang
+import lang
 
 Base = declarative_base()
 VERSION = 0
