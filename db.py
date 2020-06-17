@@ -6,6 +6,7 @@ from sqlalchemy.orm import sessionmaker, relationship
 from sqlalchemy import event
 from sqlalchemy.engine import Engine
 from sqlite3 import Connection as SQLite3Connection
+import lang.parser as lang
 
 Base = declarative_base()
 VERSION = 0
@@ -44,7 +45,7 @@ class Item(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     library_id = Column(Integer, ForeignKey("Libraries.id", ondelete="CASCADE"))
     name = Column(String, default="unnamed")
-    path = Column(String, nullable=False)
+    path = Column(String, nullable=False, unique=True)
     timestamp = Column(Float)
     file_timestamp = Column(Float)
     source = Column(String, default="user")
@@ -76,7 +77,7 @@ if __name__ == '__main__':
 
     session.commit()
 
-    if True:
+    if False:
         # test objects set up
         l = Library()
         session.add(l)
@@ -101,3 +102,5 @@ if __name__ == '__main__':
             a = TagAss(library_id=l.id, def_id=d.id, item_id=i.id, value=json.dumps(val))
             session.add(a)
         session.commit()
+
+    q = lang.Querier(session, 1).query("Cool")
