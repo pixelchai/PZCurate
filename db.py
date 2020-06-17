@@ -6,6 +6,7 @@ from sqlalchemy.orm import sessionmaker, relationship
 from sqlalchemy import event
 from sqlalchemy.engine import Engine
 from sqlite3 import Connection as SQLite3Connection
+from lang.parser import query
 
 Base = declarative_base()
 VERSION = 0
@@ -76,7 +77,7 @@ if __name__ == '__main__':
 
     session.commit()
 
-    if True:
+    if False:
         # test objects set up
         l = Library()
         session.add(l)
@@ -101,3 +102,5 @@ if __name__ == '__main__':
             a = TagAss(library_id=l.id, def_id=d.id, item_id=i.id, value=json.dumps(val))
             session.add(a)
         session.commit()
+
+    query(session, 1, "Cool = 10")
