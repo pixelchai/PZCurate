@@ -21,16 +21,24 @@ def __lex(exp: str):
     for match in re.finditer(__REGEX, exp):
         yield match.groups()
 
+# class Querier:
+#     def __init__(self):
+#         pass
+
 def __get_id_clause(session, library_id: int, lhs: str):
     for tag_def in session.query(db.TagDef).filter(and_(db.TagDef.library_id == library_id,
                                                         db.TagDef.name == lhs)):
-        return tag_def.id  # return the first one
+        return db.TagAss.def_id == tag_def.id  # return the first one
+
+def __add_filter(base_query, lhs, operator, rhs):
+    return and_(__get_id_clause(library_id))
 
 def query(session, library_id: int, exp: str):
     """
     Convert a PZCurate expression into SQLAlchemy query
     """
-    for lhs, operator, rhs in __lex(exp):
-        print(lhs, operator, rhs)
+    base_query = session.query(db.TagAss)
+    for sub_exp in __lex(exp):
+        __add_filter(base_query, library_id, *sub_exp)
 
 # query("art  time<=yesterday genre=roc% rating>3")

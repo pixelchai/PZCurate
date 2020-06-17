@@ -26,7 +26,7 @@ class TagDef(Base):
     __tablename__ = "TagDefs"
     id = Column(Integer, primary_key=True, autoincrement=True)
     library_id = Column(Integer, ForeignKey("Libraries.id", ondelete="CASCADE"))
-    name = Column(String, default="unnamed", unique=True)
+    name = Column(String, default="unnamed")
     constraints = Column(JSON)
     assignments = relationship("TagAss")
 
@@ -103,4 +103,4 @@ if __name__ == '__main__':
             session.add(a)
         session.commit()
 
-    lang.query(session, 1, "Cool = 10")
+    lang.query(session, 1, "Cool")
