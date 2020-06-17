@@ -1,0 +1,3 @@
+NB: lang's tag id resolving always resolves the first one in the database (as provided by SQLAlchemy)
+    -- does not check for nor care about TagDef s which have non-unique names -- this should be enforced elsewhere
+    NB: this should be handled by the UNIQUE constraint on TagDefs.name though

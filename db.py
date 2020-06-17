@@ -6,7 +6,7 @@ from sqlalchemy.orm import sessionmaker, relationship
 from sqlalchemy import event
 from sqlalchemy.engine import Engine
 from sqlite3 import Connection as SQLite3Connection
-from lang.parser import query
+import lang.parser as lang
 
 Base = declarative_base()
 VERSION = 0
@@ -26,7 +26,7 @@ class TagDef(Base):
     __tablename__ = "TagDefs"
     id = Column(Integer, primary_key=True, autoincrement=True)
     library_id = Column(Integer, ForeignKey("Libraries.id", ondelete="CASCADE"))
-    name = Column(String, default="unnamed")
+    name = Column(String, default="unnamed", unique=True)
     constraints = Column(JSON)
     assignments = relationship("TagAss")
 
@@ -45,7 +45,7 @@ class Item(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     library_id = Column(Integer, ForeignKey("Libraries.id", ondelete="CASCADE"))
     name = Column(String, default="unnamed")
-    path = Column(String, nullable=False)
+    path = Column(String, nullable=False, unique=True)
     timestamp = Column(Float)
     file_timestamp = Column(Float)
     source = Column(String, default="user")
@@ -103,4 +103,4 @@ if __name__ == '__main__':
             session.add(a)
         session.commit()
 
-    query(session, 1, "Cool = 10")
+    lang.query(session, 1, "Cool = 10")
