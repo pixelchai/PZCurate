@@ -9,7 +9,7 @@ art time<=yesterday genre=roc% rating>3
         and_(TagAss.def_id == {def id for rating}, cast(TagAss.value, {TagDef with def_id for rating's type (Integer|String|Float)}) > 3)
     )
 
-art time<=yesterday genre="thing with spaces" rating>3
+art time<=yesterday genre="thing with spaces >=" rating>3
 
 // NB: RHS only literals for now
 //     i.e, No time<=release_date*2
