@@ -49,7 +49,6 @@ class Item(Base):
     __tablename__ = "Items"
     id = Column(Integer, primary_key=True, autoincrement=True)
     library_id = Column(Integer, ForeignKey("Libraries.id", ondelete="CASCADE"))
-    name = Column(String, default="unnamed")
     path = Column(String, nullable=False, unique=True)
     timestamp = Column(Float)
     file_timestamp = Column(Float)

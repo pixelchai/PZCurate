@@ -76,9 +76,12 @@ class Querier:
         """
         Convert a PZCurate expression into SQLAlchemy query
         """
-        base_query = self.session.query(db.TagAss)
+        base_query = self.session.query(db.TagAss)\
+            .filter(db.TagAss.library_id == self.library_id)
+
         for sub_exp in self.lex(exp):
             base_query = base_query.filter(and_(self._get_filter_clauses(*sub_exp)))
+
         return base_query
 
 # query("art  time<=yesterday genre=roc% rating>3")
