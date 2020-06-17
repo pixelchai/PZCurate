@@ -1,4 +1,5 @@
 import os
+import json
 from sqlalchemy import create_engine, Column, Integer, String, Float, Enum, ForeignKey, Table, JSON
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, relationship
@@ -75,7 +76,7 @@ if __name__ == '__main__':
 
     session.commit()
 
-    if False:
+    if True:
         # test objects set up
         l = Library()
         session.add(l)
@@ -95,6 +96,8 @@ if __name__ == '__main__':
         session.add(d)
         session.flush()
 
-        a = TagAss(library_id=l.id, def_id=d.id, item_id=i.id)
-        session.add(a)
+        p = [10, 100, 16]
+        for val in p:
+            a = TagAss(library_id=l.id, def_id=d.id, item_id=i.id, value=json.dumps(val))
+            session.add(a)
         session.commit()

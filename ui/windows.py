@@ -1,6 +1,6 @@
 from qtpy import QtWidgets, QtGui, QtCore
 from qtpy.QtCore import Qt
-from ui.views import CentralView
+from ui import views
 
 def center(window):
     """
@@ -16,11 +16,12 @@ class MainWindow(QtWidgets.QMainWindow):
     def __init__(self):
         super().__init__()
 
-        self.central_widget = CentralView(self)
+        self.central_widget = QtWidgets.QWidget(self)
         self.setWindowTitle("PZCurate")
         self.setCentralWidget(self.central_widget)
 
-        # child dialog (if any) -- kept so that not GC'd
+        # child dialog (if any)
+        # -- kept as a class variable so that dialog doesn't get GC'd
         self.__dialog = None
 
         # containing widgets
