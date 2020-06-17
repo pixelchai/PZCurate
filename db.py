@@ -1,5 +1,6 @@
+import enum
 import os
-from sqlalchemy import create_engine, Column, Integer, String, Float, ForeignKey, JSON
+from sqlalchemy import create_engine, Column, Integer, String, Float, ForeignKey, Enum
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, relationship
 from sqlalchemy import event
@@ -21,12 +22,17 @@ class Library(Base):
     name = Column(String, default="unnamed")
     # path, etc
 
+class TagType(enum.Enum):
+    STR = 0
+    INT = 1
+    FLOAT = 2
+
 class TagDef(Base):
     __tablename__ = "TagDefs"
     id = Column(Integer, primary_key=True, autoincrement=True)
     library_id = Column(Integer, ForeignKey("Libraries.id", ondelete="CASCADE"))
     name = Column(String, default="unnamed")
-    constraints = Column(JSON)
+    tag_type = Column(Enum(TagType))
     assignments = relationship("TagAss")
 
 class TagAss(Base):
@@ -76,7 +82,7 @@ if __name__ == '__main__':
 
     session.commit()
 
-    if False:
+    if True:
         # test objects set up
         l = Library()
         session.add(l)
@@ -86,19 +92,13 @@ if __name__ == '__main__':
         session.add(i)
         session.flush()
 
-        d = TagDef(library_id=l.id, name="Cool", constraints={
-            "test": {
-                "one": "ein",
-                "two": "zwei"
-            },
-            "fruit": ["apple", "pear", "mangooo"]
-        })
+        d = TagDef(library_id=l.id, name="Cool", tag_type=TagType.INT)
         session.add(d)
         session.flush()
 
         p = [10, 100, 16]
         for val in p:
-            a = TagAss(library_id=l.id, def_id=d.id, item_id=i.id, value=json.dumps(val))
+            a = TagAss(library_id=l.id, def_id=d.id, item_id=i.id, value=str(val))
             session.add(a)
         session.commit()
 

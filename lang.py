@@ -27,16 +27,17 @@ class Querier:
         for match in re.finditer(_LEX_REGEX, exp):
             yield match.groups()
 
-    def _get_id_clause(self, lhs: str):
+    def _get_tag_def(self, lhs: str):
         for tag_def in self.session.query(db.TagDef).filter(and_(db.TagDef.library_id == self.library_id,
                                                                  db.TagDef.name == lhs)):
-            return db.TagAss.def_id == tag_def.id  # return the first one
+            return tag_def  # return the first one
 
     def _get_filter(self, lhs, operator, rhs):
-        id_clause = self._get_id_clause(lhs)
+        tag_def = self._get_tag_def(lhs)
+        def_id_clause = db.TagAss.def_id == tag_def.id
 
         if operator is None and rhs is None:
-            return id_clause
+            return def_id_clause
 
     def query(self, exp: str):
         """
