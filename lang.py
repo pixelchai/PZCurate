@@ -1,4 +1,5 @@
 import re
+import sqlalchemy as sqla
 from sqlalchemy.sql.expression import and_, cast
 import db
 
@@ -32,12 +33,44 @@ class Querier:
                                                                  db.TagDef.name == lhs)):
             return tag_def  # return the first one
 
-    def _get_filter(self, lhs, operator, rhs):
+    def _get_filter_clauses(self, lhs, operator, rhs):
         tag_def = self._get_tag_def(lhs)
-        def_id_clause = db.TagAss.def_id == tag_def.id
+        yield db.TagAss.def_id == tag_def.id
 
-        if operator is None and rhs is None:
-            return def_id_clause
+        if rhs is not None and operator is not None:
+            clause_lhs = db.TagAss.value
+
+            # cast clause_lhs into correct type (database-side)
+            cast_type = {
+                db.TagType.INT: sqla.Integer,
+                db.TagType.FLOAT: sqla.Float,
+                db.TagType.STR: sqla.String
+            }.get(tag_def.tag_type)
+
+            if cast_type is not None:
+                clause_lhs = cast(clause_lhs, cast_type)
+
+            # operator on clause_lhs
+            if operator == "=":
+                # 'LIKE' clause if string
+                if tag_def.tag_type == db.TagType.STR:
+                    yield clause_lhs.like(rhs)
+                else:
+                    yield clause_lhs == rhs
+            elif operator == "!=":
+                # 'NOT LIKE' clause if string
+                if tag_def.tag_type == db.TagType.STR:
+                    yield clause_lhs.notlike(rhs)
+                else:
+                    yield clause_lhs != rhs
+            elif operator == '>=':
+                yield clause_lhs >= rhs
+            elif operator == '<=':
+                yield clause_lhs <= rhs
+            elif operator == ">":
+                yield clause_lhs > rhs
+            elif operator == "<":
+                yield clause_lhs < rhs
 
     def query(self, exp: str):
         """
@@ -45,7 +78,7 @@ class Querier:
         """
         base_query = self.session.query(db.TagAss)
         for sub_exp in self.lex(exp):
-            base_query = base_query.filter(self._get_filter(*sub_exp))
+            base_query = base_query.filter(and_(self._get_filter_clauses(*sub_exp)))
         return base_query
 
 # query("art  time<=yesterday genre=roc% rating>3")

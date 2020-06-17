@@ -14,3 +14,5 @@ art time<=yesterday genre="thing with spaces >=" rating>3
 // NB: RHS only literals for now
 //     i.e, No time<=release_date*2
 //          or rating >= 5/2
+
+// Actually: implement 'time' special case later

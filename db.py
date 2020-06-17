@@ -82,7 +82,7 @@ if __name__ == '__main__':
 
     session.commit()
 
-    if True:
+    if False:
         # test objects set up
         l = Library()
         session.add(l)
@@ -102,4 +102,5 @@ if __name__ == '__main__':
             session.add(a)
         session.commit()
 
-    q = lang.Querier(session, 1).query("Cool")
+    q = lang.Querier(session, 1).query("Cool>5 Cool>3")
+    print(str(q))
