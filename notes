@@ -1,3 +1,13 @@
 NB: lang's tag id resolving always resolves the first one in the database (as provided by SQLAlchemy)
     -- does not check for nor care about TagDef s which have non-unique names -- this should be enforced elsewhere
     NB: this can't be handled by a UNIQUE constraint on TagDefs.name, because names should only be Unique within libraries
+
+NB: do we really need Item.library_id ?
+    Consider: dump of files on file system, then these assigned to libraries via TagAsses
+    TagDef needs library_id because different possible tags for each library
+
+NB: remove Item.library_id because ^
+    remove Item.timestamp and Item.file_timestamp so as to favour creating a default TagDef for them
+    and also system-generated TagAsses on import (better because can modularise more: e.g: file_importer module can assign file_timestamp but perhaps social media importer wouldn't be able to access this info, so won't)
+    Added TagDef.source to facilitate with this
+    NB: maybe naming system like TagDef.source = "SYSTEM:file_importer", "USER", "MODULE:social_plugin", etc <-- solidify later

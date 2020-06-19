@@ -36,6 +36,7 @@ class TagDef(Base):
     library_id = Column(Integer, ForeignKey("Libraries.id", ondelete="CASCADE"))
     name = Column(String, default="unnamed")
     tag_type = Column(Enum(TagType))
+    source = Column(String, default="user")
     assignments = relationship("TagAss")
 
 class TagAss(Base):
@@ -51,10 +52,7 @@ class TagAss(Base):
 class Item(Base):
     __tablename__ = "Items"
     id = Column(Integer, primary_key=True, autoincrement=True)
-    library_id = Column(Integer, ForeignKey("Libraries.id", ondelete="CASCADE"))
     path = Column(String, nullable=False, unique=True)
-    timestamp = Column(Float)
-    file_timestamp = Column(Float)
     source = Column(String, default="user")
 
 @event.listens_for(Engine, "connect")
