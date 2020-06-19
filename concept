@@ -7,3 +7,21 @@ session.query(Item)
 session.query(Item)
     .join(item_ass, Item.id == TagAss.item_id)
     .filter(and_(TagAss.def_id == 2, TagAss.value.like("roc%")))
+
+art ratio > 0.5
+
+SELECT Items.id FROM Items
+INNER JOIN TagAsses ON TagAsses.item_id = Items.id
+WHERE TagAsses.def_id=1
+AND Items.id IN (
+	SELECT Items.id FROM Items
+	INNER JOIN TagAsses ON TagAsses.item_id = Items.id
+	WHERE TagAsses.def_id=4 AND CAST(TagAsses.value AS FLOAT) > 0.5
+)
+
+subq = session.query(Item)
+        .join(item_ass, Item.id == TagAss.item_id)
+        .filter(and_(TagAss.def_id == 2, cast(TagAss.value, Float) > 0.5))
+session.query(Item)
+        .join(TagAss, TagAss.item_id == Item.id)
+        .filter(and_(TagAss.def_id == 1, Item.id.in_(subq)))

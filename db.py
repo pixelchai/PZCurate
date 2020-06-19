@@ -82,7 +82,7 @@ if __name__ == '__main__':
 
     session.commit()
 
-    if True:
+    if False:
         # test objects set up
         l = Library()
         session.add(l)
@@ -140,5 +140,5 @@ if __name__ == '__main__':
 
 
 
-    q = lang.Querier(session, 1).query("art")
+    q = lang.Querier(session, 1).query("art ratio>0.5")
     print(str(q))
