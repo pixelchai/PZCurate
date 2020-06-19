@@ -77,9 +77,8 @@ class Querier:
         Convert a PZCurate expression into SQLAlchemy query
         """
         base_query = self.session.query(db.Item)\
-            .filter(db.Item)
+            .filter(db.Item.library_id == self.library_id)\
             .join(db.TagAss, db.Item.id == db.TagAss.item_id)\
-            .filter(db.TagAss.library_id == self.library_id)
 
         for sub_exp in self.lex(exp):
             base_query = base_query.filter(and_(self._get_filter_clauses(*sub_exp)))

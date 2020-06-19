@@ -11,3 +11,7 @@ NB: remove Item.library_id because ^
     and also system-generated TagAsses on import (better because can modularise more: e.g: file_importer module can assign file_timestamp but perhaps social media importer wouldn't be able to access this info, so won't)
     Added TagDef.source to facilitate with this
     NB: maybe naming system like TagDef.source = "SYSTEM:file_importer", "USER", "MODULE:social_plugin", etc <-- solidify later
+
+NB: reinstated Item.library_id but removed TagAss.library_id.
+    Previously, it would require for a Item to have at least one TagAss to be in a certain library. However, an Item
+    should have the intrinsic property of existing in a library

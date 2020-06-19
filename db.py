@@ -42,7 +42,6 @@ class TagDef(Base):
 class TagAss(Base):
     __tablename__ = "TagAsses"
     id = Column(Integer, primary_key=True, autoincrement=True)
-    library_id = Column(Integer, ForeignKey("Libraries.id", ondelete="CASCADE"))
     def_id = Column(Integer, ForeignKey("TagDefs.id", ondelete="CASCADE"))
     item_id = Column(Integer, ForeignKey("Items.id", ondelete="CASCADE"))
     value = Column(String)
@@ -52,6 +51,7 @@ class TagAss(Base):
 class Item(Base):
     __tablename__ = "Items"
     id = Column(Integer, primary_key=True, autoincrement=True)
+    library_id = Column(Integer, ForeignKey("Libraries.id", ondelete="CASCADE"))
     path = Column(String, nullable=False, unique=True)
     source = Column(String, default="user")
 
@@ -82,7 +82,7 @@ if __name__ == '__main__':
 
     session.commit()
 
-    if False:
+    if True:
         # test objects set up
         l = Library()
         session.add(l)
@@ -112,7 +112,7 @@ if __name__ == '__main__':
         # ratings
         ratings = [1, 2, 3, 4, 5]*(20//5)
         for i, val in enumerate(ratings):
-            a = TagAss(library_id=l.id, def_id=3, item_id=i+1, value=str(val))
+            a = TagAss(def_id=3, item_id=i+1, value=str(val))
             session.add(a)
         session.flush()
 
@@ -120,25 +120,25 @@ if __name__ == '__main__':
         sel = list(range(1, 20+1))
         random.shuffle(sel)
         for i in sel[:8]:
-            a = TagAss(library_id=1, def_id=1, item_id=i)
+            a = TagAss(def_id=1, item_id=i)
             session.add(a)
         session.flush()
 
         # ratios
         random.shuffle(sel)
         for i in sel[:5]:
-            a = TagAss(library_id=1, def_id=4, item_id=i, value=str(random.random()))
+            a = TagAss(def_id=4, item_id=i, value=str(random.random()))
             session.add(a)
         session.flush()
 
         genres = ["rock", "block", "jazz", "blues", "wow"]
         random.shuffle(sel)
         for i in sel[:10]:
-            a = TagAss(library_id=1, def_id=2, item_id=i, value=random.choice(genres))
+            a = TagAss(def_id=2, item_id=i, value=random.choice(genres))
             session.add(a)
         session.commit()
 
 
 
-    q = lang.Querier(session, 1).query("")
+    q = lang.Querier(session, 1).query("art")
     print(str(q))
