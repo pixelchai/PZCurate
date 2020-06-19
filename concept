@@ -1,3 +1,9 @@
 art genre=roc% rating>3
 
-SELECT Items FROM
+session.query(Item)
+    .join(item_ass, Item.id == TagAss.item_id)
+    .filter(TagAss.def_id == {def id for art})
+
+session.query(Item)
+    .join(item_ass, Item.id == TagAss.item_id)
+    .filter(and_(TagAss.def_id == 2, TagAss.value.like("roc%")))
