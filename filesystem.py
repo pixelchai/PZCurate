@@ -1,5 +1,7 @@
 import os
 import platform
+from watchdog.observers import Observer
+from watchdog.events import FileSystemEventHandler
 
 def get_appdata_path():
     if platform.system() == "Windows":
@@ -19,7 +21,25 @@ def get_documents_path():
 
         return buf.value
     else:
+        # assume running Linux-like system
         return os.path.expanduser(os.path.join("~", "Documents"))
 
 def get_data_path():
     return os.path.join(get_documents_path(), "PZCurate")
+
+PATH_IMPORT = os.path.join(get_data_path(), "import")
+
+# create paths
+os.makedirs(PATH_IMPORT, exist_ok=True)
+
+class LolEventHandler(FileSystemEventHandler):
+    def on_any_event(self, event):
+        print(event)
+
+observer = Observer()
+lol = LolEventHandler()
+observer.schedule(lol, PATH_IMPORT)
+observer.start()
+
+while 1:
+    pass
