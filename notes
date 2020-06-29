@@ -1,3 +1,6 @@
+db = database
+fs = filesystem
+
 NB: lang's tag id resolving always resolves the first one in the database (as provided by SQLAlchemy)
     -- does not check for nor care about TagDef s which have non-unique names -- this should be enforced elsewhere
     NB: this can't be handled by a UNIQUE constraint on TagDefs.name, because names should only be Unique within libraries
@@ -15,3 +18,11 @@ NB: remove Item.library_id because ^
 NB: reinstated Item.library_id but removed TagAss.library_id.
     Previously, it would require for a Item to have at least one TagAss to be in a certain library. However, an Item
     should have the intrinsic property of existing in a library
+
+maybe allow 'reference to another Item' as an acceptable datatype
+so users can set up prequel: <ref to another item>, sequel, etc (insp: MyAnimeList)
+
+Need some way to store thumbnail data as well
+
+think about file-system no name collision method?
+-> or just store blobs in database (probably not though because blobs in db kinda bad)

@@ -4,25 +4,18 @@ import logging
 import os
 import platform
 from typing import Optional
+import filesystem as fs
 
 logger: Optional[logging.Logger] = None
 
 def is_debug():
     return os.environ["DEBUG"] == "1"
 
-def get_program_path():
-    if platform.system() == "Windows":
-        # assume running Windows
-        return os.path.join(os.environ['APPDATA'], "pzcurate")
-    else:
-        # assume running Linux-like system
-        return os.path.expanduser(os.path.join("~", ".pzcurate"))
-
 def _setup_logger():
     global logger
     logger = logging.getLogger("pzcurate")
 
-    log_path = os.path.join(get_program_path(), "log")
+    log_path = os.path.join(fs.get_appdata_path(), "log")
     os.makedirs(log_path, exist_ok=True)
 
     formatter = logging.Formatter("%(asctime)s %(levelname)s (%(module)s:%(lineno)s): %(message)s")

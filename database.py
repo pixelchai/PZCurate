@@ -138,7 +138,5 @@ if __name__ == '__main__':
             session.add(a)
         session.commit()
 
-
-
-    q = lang.Querier(session, 1).query("art ratio>0.5")
+    q = lang.Querier(session, 1).query("art>0.5")
     print(str(q))
