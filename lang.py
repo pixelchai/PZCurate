@@ -72,18 +72,28 @@ class Querier:
             elif operator == "<":
                 yield clause_lhs < rhs
 
+    def _get_filter(self, sub_exp, prev_query=None):
+        clauses = list(self._get_filter_clauses(*sub_exp))
+
+        if prev_query is not None:
+            clauses.append(db.Item.id.in_(prev_query))
+        else:
+            # implies first filter (innermost subquery)
+            # so filter by library_id here
+            clauses.append(db.Item.library_id == self.library_id)
+
+        return self.session.query(db.Item.id)\
+                   .join(db.TagAss, db.Item.id == db.TagAss.item_id)\
+                   .filter(and_(*clauses))
+
     def query(self, exp: str):
         """
         Convert a PZCurate expression into SQLAlchemy query
         """
-        base_query = self.session.query(db.Item)\
-            .filter(db.Item.library_id == self.library_id)\
-            .join(db.TagAss, db.Item.id == db.TagAss.item_id)\
-
+        query = None
         for sub_exp in self.lex(exp):
-            base_query = base_query.filter(and_(self._get_filter_clauses(*sub_exp)))
+            query = self._get_filter(sub_exp, query)
 
-        return base_query
-
-# query("art  time<=yesterday genre=roc% rating>3")
-# q = Querier(None, None)
+        # return Item objects (not just iterable of Item ids)
+        return self.session.query(db.Item)\
+                   .filter(db.Item.id.in_(query))
