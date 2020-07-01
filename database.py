@@ -70,7 +70,7 @@ def _setup_session():
     global session
 
     database_existed = os.path.isfile(fs.PATH_DATABASE)
-    engine = create_engine('sqlite:///' + fs.PATH_DATABASE, echo=False)
+    engine = create_engine('sqlite:///' + fs.PATH_DATABASE, echo=True)
 
     Session.configure(bind=engine)
     session = Session()
