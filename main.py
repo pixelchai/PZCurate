@@ -1,7 +1,7 @@
 import sys
 from qtpy import QtWidgets, QtGui, QtCore
 from ui import windows
-from importers import FolderWatcher
+from importer import FolderWatcher
 from threading import Thread
 
 app = QtWidgets.QApplication(sys.argv)

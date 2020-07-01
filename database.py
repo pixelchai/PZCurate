@@ -48,7 +48,6 @@ class Item(Base):
     __tablename__ = "Items"
     id = Column(Integer, primary_key=True, autoincrement=True)
     path = Column(String, nullable=False, unique=True)
-    source = Column(String, default="user")
 
 @event.listens_for(Engine, "connect")
 def _set_sqlite_pragma(dbapi_connection, connection_record):
