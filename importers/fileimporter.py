@@ -5,6 +5,11 @@ from utils import logger
 from watchdog.events import FileSystemEventHandler
 from watchdog.observers import Observer
 
+
+class FileImporter:
+    def __init__(self, path):
+        self.path = path
+
 class FileImporterEventHandler(FileSystemEventHandler):
     def on_created(self, event):
         for file in os.listdir(fs.PATH_IMPORT):

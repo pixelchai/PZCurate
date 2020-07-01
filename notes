@@ -40,3 +40,21 @@ but the window that pops up to edit the tags EDIT (UPDATE queries)
 => good because can reuse this ui component later too
 
 TODO: no need to pass session to stuff (to lang.py) if global session in database.py
+
+considering replacing current library implementation (library_id) with simple (user-defined) media: music/photos/wallpapers/whatever tag
+or perhaps even library: music/photos/wallpapers etc tag
+Why:
+    removing library_id would simplify name collision matching
+    more importantly:
+        If an `Item` is to be instantiated upon importation of a file, library_id must be provided at import-time (or set as NULL)
+        the `Item` object must be flushed to db in order for it to have an item id -- necessary to assign tags to the Item
+        therefore, if the user wishes to change the target library for the Item with the tagging dialog, the db will need to be rolled back and so on
+        Anyway its just messy
+    organisation/UX:
+        Consider: using a social media importer -- however that social media contains content from multiple domains (libraries)
+        e.g: has photos, but also music (quite common).
+        Seems clumsy to move items from the same source into a different library in the above scheme
+        especially considering the fact that TagDefs common to that social media would need to be recreated in all the libraries
+    idk if the above made sense (i'm sleepy) and there are probably other examples that can be given but anyway at the end of the day,
+    it's just a bit clumsy in comparison to using a TagDef 'library' instead.
+    Note: TagDef 'library' system seems more in-line with the philosophy of the rest of the system (think: timestamp field was removed in favour of 'timestamp' TagDef)
