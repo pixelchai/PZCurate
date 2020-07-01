@@ -6,6 +6,7 @@ from utils import logger
 from watchdog.events import FileSystemEventHandler
 from watchdog.observers import Observer
 from taggers import FileTagger
+import shutil
 
 _HASH_BUF_SIZE = 65536
 
@@ -27,11 +28,15 @@ class FileImporterEventHandler(FileSystemEventHandler):
         for file in os.listdir(fs.PATH_IMPORT):
             logger.debug("Importing: {}".format(file))
             file_path = os.path.join(fs.PATH_IMPORT, file)
-            item = db.Item(path="files/" + get_file_hash(file_path) + os.path.splitext(file)[1])
+            hash_filename = get_file_hash(file_path) + os.path.splitext(file)[1]
+            item = db.Item(path="files/" + hash_filename)
             db.session.add(item)
-            db.session.flush()
+            db.session.flush()  # fixme: error here if md5 collision (sqlalchemy.exc.IntegrityError)
 
-            FileTagger.tag(item, file_path)
+            # move file then send off to FileTagger
+            new_file_path = os.path.join(fs.PATH_TMP, hash_filename)
+            shutil.move(file_path, new_file_path)  # favouring shutil.move over os.rename because https://stackoverflow.com/a/21116654/5013267
+            FileTagger.tag(item, new_file_path)
 
 class FolderWatcher:
     def __init__(self):

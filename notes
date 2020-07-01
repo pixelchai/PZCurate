@@ -39,7 +39,7 @@ reminder: importer flushes+commits to db and all (required to get Item id so tha
 but the window that pops up to edit the tags EDIT (UPDATE queries)
 => good because can reuse this ui component later too
 
-TODO: no need to pass session to stuff (to lang.py) if global session in database.py
+done: no need to pass session to stuff (to lang.py) if global session in database.py
 
 considering replacing current library implementation (library_id) with simple (user-defined) media: music/photos/wallpapers/whatever tag
 or perhaps even library: music/photos/wallpapers etc tag

@@ -6,10 +6,10 @@ import zipfile
 def get_appdata_path():
     if platform.system() == "Windows":
         # assume running Windows
-        return os.path.join(os.environ['APPDATA'], "pzcurate")
+        return os.path.join(os.environ['APPDATA'], "PZCurate")
     else:
         # assume running Linux-like system
-        return os.path.expanduser(os.path.join("~", ".pzcurate"))
+        return os.path.expanduser(os.path.join("~", ".PZCurate"))
 
 def get_documents_path():
     if platform.system() == "Windows":
@@ -24,12 +24,11 @@ def get_documents_path():
         # assume running Linux-like system
         return os.path.expanduser(os.path.join("~", "Documents"))
 
-def get_data_path():
-    return os.path.join(get_documents_path(), "PZCurate")
-
-PATH_IMPORT = os.path.join(get_data_path(), "import")
-PATH_DATABASE = os.path.join(get_data_path(), "data.db")    # Item/Tag/etc structured data
-PATH_DATAZIP = os.path.join(get_data_path(), "data.zip")    # actual file data
+PATH_DATA = os.path.join(get_documents_path(), "PZCurate")
+PATH_IMPORT = os.path.join(PATH_DATA, "import")
+PATH_DATABASE = os.path.join(PATH_DATA, "data.db")    # Item/Tag/etc structured data
+PATH_DATAZIP = os.path.join(PATH_DATA, "data.zip")    # actual file data
+PATH_TMP = os.path.join(get_appdata_path(), "tmp")    # actual file data
 
 class DataZipFile(zipfile.ZipFile):
     def __init__(self):
@@ -50,7 +49,4 @@ class DataZipFile(zipfile.ZipFile):
 
 # create paths
 os.makedirs(PATH_IMPORT, exist_ok=True)
-
-if __name__ == '__main__':
-    z = DataZipFile()
-    z.get_new_name()
+os.makedirs(PATH_TMP, exist_ok=True)

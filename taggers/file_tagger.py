@@ -3,7 +3,6 @@ import time
 from typing import Any, Optional, Iterable
 import database as db
 from utils import logger
-from abc import abstractmethod
 
 class Tagger:
     def __init__(self, tagger_name, item: "db.Item"):
