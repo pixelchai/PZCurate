@@ -58,3 +58,4 @@ Why:
     idk if the above made sense (i'm sleepy) and there are probably other examples that can be given but anyway at the end of the day,
     it's just a bit clumsy in comparison to using a TagDef 'library' instead.
     Note: TagDef 'library' system seems more in-line with the philosophy of the rest of the system (think: timestamp field was removed in favour of 'timestamp' TagDef)
+NB: TagDef will probably be called 'media' not 'library' now (name sounds clearer)

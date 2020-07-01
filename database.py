@@ -1,6 +1,8 @@
 import enum
 import os
 import random
+from typing import Optional, Any
+from utils import logger
 from sqlalchemy import create_engine, Column, Integer, String, Float, ForeignKey, Enum
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, relationship, aliased
@@ -19,12 +21,6 @@ class InternalMeta(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     version = Column(Integer, default=VERSION)
 
-class Library(Base):
-    __tablename__ = "Libraries"
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    name = Column(String, default="unnamed")
-    # path, etc
-
 class TagType(enum.Enum):
     LABEL = 0
     STR = 1
@@ -34,9 +30,8 @@ class TagType(enum.Enum):
 class TagDef(Base):
     __tablename__ = "TagDefs"
     id = Column(Integer, primary_key=True, autoincrement=True)
-    library_id = Column(Integer, ForeignKey("Libraries.id", ondelete="CASCADE"))
-    name = Column(String, default="unnamed")
-    tag_type = Column(Enum(TagType))
+    name = Column(String, default="unnamed", unique=True)
+    tag_type: TagType = Column(Enum(TagType))
     source = Column(String, default="user")
     assignments = relationship("TagAss")
 
@@ -52,7 +47,6 @@ class TagAss(Base):
 class Item(Base):
     __tablename__ = "Items"
     id = Column(Integer, primary_key=True, autoincrement=True)
-    library_id = Column(Integer, ForeignKey("Libraries.id", ondelete="CASCADE"))
     path = Column(String, nullable=False, unique=True)
     source = Column(String, default="user")
 
@@ -66,7 +60,12 @@ def _set_sqlite_pragma(dbapi_connection, connection_record):
 
 Session = sessionmaker()
 engine = None
-session = None
+session: Any = None
+
+def _def_system_tags():
+    session.add(TagDef(name="timestamp", tag_type=TagType.FLOAT, source="system"))
+    session.add(TagDef(name="media", tag_type=TagType.STR, source="system"))
+    session.commit()
 
 def _setup_session():
     global engine
@@ -74,7 +73,7 @@ def _setup_session():
 
     database_path = os.path.join(fs.get_data_path(), "data.db")
     database_existed = os.path.isfile(database_path)
-    engine = create_engine('sqlite:///' + database_path, echo=True)
+    engine = create_engine('sqlite:///' + database_path, echo=False)
 
     Session.configure(bind=engine)
     session = Session()
@@ -82,6 +81,8 @@ def _setup_session():
     if not database_existed:
         Base.metadata.create_all(engine)
         session.merge(InternalMeta(id=1))
+        _def_system_tags()
+        logger.info("Database did not exist. Created new one.")
     else:
         from migrator import migrate
         migrate(session)
@@ -93,28 +94,23 @@ _setup_session()
 
 if __name__ == '__main__':
     if False:
-        # test objects set up
-        l = Library()
-        session.add(l)
-        session.flush()
-
         # items
         for i in range(20):
-            item = Item(library_id=l.id, path="bruh_{:03d}".format(i))
+            item = Item(path="bruh_{:03d}".format(i))
             session.add(item)
             session.flush()
 
         # TagDefs
-        d = TagDef(library_id=l.id, name="art", tag_type=TagType.LABEL)
+        d = TagDef(name="art", tag_type=TagType.LABEL)
         session.add(d)
 
-        d = TagDef(library_id=l.id, name="genre", tag_type=TagType.STR)
+        d = TagDef(name="genre", tag_type=TagType.STR)
         session.add(d)
 
-        d = TagDef(library_id=l.id, name="rating", tag_type=TagType.INT)
+        d = TagDef(name="rating", tag_type=TagType.INT)
         session.add(d)
 
-        d = TagDef(library_id=l.id, name="ratio", tag_type=TagType.FLOAT)
+        d = TagDef(name="ratio", tag_type=TagType.FLOAT)
         session.add(d)
         session.flush()
 

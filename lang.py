@@ -12,9 +12,8 @@ _LEX_REGEX = r"(\w+)\s*" \
              r"))?"
 
 class Querier:
-    def __init__(self, session, library_id):
-        self.session = session
-        self.library_id = library_id
+    def __init__(self):
+        pass
 
     @staticmethod
     def lex(exp: str):
@@ -25,8 +24,7 @@ class Querier:
             yield match.groups()
 
     def _get_tag_def(self, lhs: str):
-        for tag_def in self.session.query(db.TagDef).filter(and_(db.TagDef.library_id == self.library_id,
-                                                                 db.TagDef.name == lhs)):
+        for tag_def in db.session.query(db.TagDef).filter(db.TagDef.name == lhs):
             return tag_def  # return the first one
 
     def _get_filter_clauses(self, lhs, operator, rhs):
@@ -73,14 +71,10 @@ class Querier:
 
         if prev_query is not None:
             clauses.append(db.Item.id.in_(prev_query))
-        else:
-            # implies first filter (innermost subquery)
-            # so filter by library_id here
-            clauses.append(db.Item.library_id == self.library_id)
 
-        return self.session.query(db.Item.id)\
-                   .join(db.TagAss, db.Item.id == db.TagAss.item_id)\
-                   .filter(and_(*clauses))
+        return db.session.query(db.Item.id)\
+                 .join(db.TagAss, db.Item.id == db.TagAss.item_id)\
+                 .filter(and_(*clauses))
 
     def query(self, exp: str):
         """
@@ -91,5 +85,5 @@ class Querier:
             query = self._get_filter(sub_exp, query)
 
         # return Item objects (not just iterable of Item ids)
-        return self.session.query(db.Item)\
-                   .filter(db.Item.id.in_(query))
+        return db.session.query(db.Item)\
+                 .filter(db.Item.id.in_(query))
