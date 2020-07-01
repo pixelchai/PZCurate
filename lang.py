@@ -24,12 +24,11 @@ class Querier:
             yield match.groups()
 
     def _get_tag_def(self, lhs: str):
-        for tag_def in db.session.query(db.TagDef).filter(db.TagDef.name == lhs):
-            return tag_def  # return the first one
+        return db.session.query(db.TagDef).get(lhs)
 
     def _get_filter_clauses(self, lhs, operator, rhs):
         tag_def = self._get_tag_def(lhs)
-        yield db.TagAss.def_id == tag_def.id
+        yield db.TagAss.def_name == tag_def.name
 
         if rhs is not None and operator is not None:
             clause_lhs = db.TagAss.value

@@ -64,3 +64,6 @@ removed Item.source
     -> will always be 'file' because other importers should download files first to the import folder
     and let the FileImporter manage Item instantiation and etc
     tag stuff, however, should be done by the importers differently
+
+remove TagDef.id and replace with TagDef.name as primary key -> simplifies a bunch of stuff
+    notably: don't need to poll database for id from name -> can just directly use name

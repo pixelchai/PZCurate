@@ -29,8 +29,7 @@ class TagType(enum.Enum):
 
 class TagDef(Base):
     __tablename__ = "TagDefs"
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    name = Column(String, default="unnamed", unique=True)
+    name = Column(String, default="unnamed", primary_key=True, unique=True)
     tag_type: TagType = Column(Enum(TagType))
     source = Column(String, default="user")
     assignments = relationship("TagAss")
@@ -38,7 +37,7 @@ class TagDef(Base):
 class TagAss(Base):
     __tablename__ = "TagAsses"
     id = Column(Integer, primary_key=True, autoincrement=True)
-    def_id = Column(Integer, ForeignKey("TagDefs.id", ondelete="CASCADE"))
+    def_name = Column(String, ForeignKey("TagDefs.name", ondelete="CASCADE"))
     item_id = Column(Integer, ForeignKey("Items.id", ondelete="CASCADE"))
     value = Column(String)
     source = Column(String, default="user")
@@ -116,7 +115,7 @@ if __name__ == '__main__':
         # ratings
         ratings = [1, 2, 3, 4, 5]*(20//5)
         for i, val in enumerate(ratings):
-            a = TagAss(def_id=3, item_id=i+1, value=str(val))
+            a = TagAss(def_name="rating", item_id=i+1, value=str(val))
             session.add(a)
         session.flush()
 
@@ -124,20 +123,20 @@ if __name__ == '__main__':
         sel = list(range(1, 20+1))
         random.shuffle(sel)
         for i in sel[:8]:
-            a = TagAss(def_id=1, item_id=i)
+            a = TagAss(def_name="art", item_id=i)
             session.add(a)
         session.flush()
 
         # ratios
         random.shuffle(sel)
         for i in sel[:5]:
-            a = TagAss(def_id=4, item_id=i, value=str(random.random()))
+            a = TagAss(def_name="ratio", item_id=i, value=str(random.random()))
             session.add(a)
         session.flush()
 
         genres = ["rock", "block", "jazz", "blues", "wow"]
         random.shuffle(sel)
         for i in sel[:10]:
-            a = TagAss(def_id=2, item_id=i, value=random.choice(genres))
+            a = TagAss(def_name="genre", item_id=i, value=random.choice(genres))
             session.add(a)
         session.commit()
