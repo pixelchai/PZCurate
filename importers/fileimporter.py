@@ -1,20 +1,39 @@
+import hashlib
 import os
-
+import database as db
 import filesystem as fs
 from utils import logger
 from watchdog.events import FileSystemEventHandler
 from watchdog.observers import Observer
 
+_HASH_BUF_SIZE = 65536
+
+def get_file_hash(path: str):
+    # https://stackoverflow.com/a/22058673/5013267
+    hasher = hashlib.md5()  # md5 because fast (+ not too interested in security)
+
+    with open(path, 'rb') as f:
+        while True:
+            data = f.read(_HASH_BUF_SIZE)
+            if not data:
+                break
+            hasher.update(data)
+
+    return hasher.hexdigest()
 
 class FileImporter:
     def __init__(self, path):
         self.path = path
 
+
 class FileImporterEventHandler(FileSystemEventHandler):
     def on_created(self, event):
         for file in os.listdir(fs.PATH_IMPORT):
             file_path = os.path.join(fs.PATH_IMPORT, file)
-            pass
+            item = db.Item(path="files/" + get_file_hash(file_path) + os.path.splitext(file)[1],
+                           source="file")
+            db.session.add(item)
+            db.session.flush()
 
 class FolderWatcher:
     def __init__(self):

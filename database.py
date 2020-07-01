@@ -71,9 +71,8 @@ def _setup_session():
     global engine
     global session
 
-    database_path = os.path.join(fs.get_data_path(), "data.db")
-    database_existed = os.path.isfile(database_path)
-    engine = create_engine('sqlite:///' + database_path, echo=False)
+    database_existed = os.path.isfile(fs.PATH_DATABASE)
+    engine = create_engine('sqlite:///' + fs.PATH_DATABASE, echo=False)
 
     Session.configure(bind=engine)
     session = Session()

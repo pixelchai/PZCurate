@@ -1,5 +1,7 @@
 import os
 import platform
+import time
+import zipfile
 
 def get_appdata_path():
     if platform.system() == "Windows":
@@ -26,6 +28,29 @@ def get_data_path():
     return os.path.join(get_documents_path(), "PZCurate")
 
 PATH_IMPORT = os.path.join(get_data_path(), "import")
+PATH_DATABASE = os.path.join(get_data_path(), "data.db")    # Item/Tag/etc structured data
+PATH_DATAZIP = os.path.join(get_data_path(), "data.zip")    # actual file data
+
+class DataZipFile(zipfile.ZipFile):
+    def __init__(self):
+        super().__init__(PATH_DATAZIP,
+                         mode="a",
+                         compression=zipfile.ZIP_DEFLATED,
+                         allowZip64=True,
+                         compresslevel=-1)
+
+    def get_num_files(self):
+        # unused, may delete later
+        file_count = 0
+        for filename in self.namelist():
+            if filename.startswith("files/"):
+                file_count += 1
+        return file_count
+
 
 # create paths
 os.makedirs(PATH_IMPORT, exist_ok=True)
+
+if __name__ == '__main__':
+    z = DataZipFile()
+    z.get_new_name()
