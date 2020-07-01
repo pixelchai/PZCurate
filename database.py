@@ -9,6 +9,7 @@ from sqlalchemy import event
 from sqlalchemy.engine import Engine
 from sqlite3 import Connection as SQLite3Connection
 import lang
+import filesystem as fs
 
 Base = declarative_base()
 VERSION = 0
@@ -63,10 +64,15 @@ def _set_sqlite_pragma(dbapi_connection, connection_record):
         cursor.execute("PRAGMA foreign_keys=ON;")
         cursor.close()
 
-if __name__ == '__main__':
-    Session = sessionmaker()
+Session = sessionmaker()
+engine = None
+session = None
 
-    database_path = "data.db"
+def _setup_session():
+    global engine
+    global session
+
+    database_path = os.path.join(fs.get_data_path(), "data.db")
     database_existed = os.path.isfile(database_path)
     engine = create_engine('sqlite:///' + database_path, echo=True)
 
@@ -82,6 +88,10 @@ if __name__ == '__main__':
 
     session.commit()
 
+# set up session (will be globally accessible through `session`)
+_setup_session()
+
+if __name__ == '__main__':
     if False:
         # test objects set up
         l = Library()
@@ -137,6 +147,3 @@ if __name__ == '__main__':
             a = TagAss(def_id=2, item_id=i, value=random.choice(genres))
             session.add(a)
         session.commit()
-
-    q = lang.Querier(session, 1).query("art>0.5")
-    print(str(q))

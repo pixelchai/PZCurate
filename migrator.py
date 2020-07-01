@@ -1,4 +1,4 @@
-import db
+import database as db
 from utils import logger
 
 def migrate(session):

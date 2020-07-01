@@ -55,3 +55,7 @@ AND Items.id IN (
         AND Items.library_id=1
     )
 )
+
+syntax maybe <name>@<source>
+so like: category@instagram
+(or maybe <name>#<source>)

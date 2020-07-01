@@ -1,7 +1,5 @@
 import os
 import platform
-from watchdog.observers import Observer
-from watchdog.events import FileSystemEventHandler
 
 def get_appdata_path():
     if platform.system() == "Windows":
@@ -31,15 +29,3 @@ PATH_IMPORT = os.path.join(get_data_path(), "import")
 
 # create paths
 os.makedirs(PATH_IMPORT, exist_ok=True)
-
-class LolEventHandler(FileSystemEventHandler):
-    def on_any_event(self, event):
-        print(event)
-
-observer = Observer()
-lol = LolEventHandler()
-observer.schedule(lol, PATH_IMPORT)
-observer.start()
-
-while 1:
-    pass

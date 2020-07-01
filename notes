@@ -26,3 +26,17 @@ Need some way to store thumbnail data as well
 
 think about file-system no name collision method?
 -> or just store blobs in database (probably not though because blobs in db kinda bad)
+
+maybe call plugins "processes"
+Thumbnails should expire over time / regen as required to save space
+-> new Thumbnail table
+
+reminder: going to use zip file for actually storing files on disk
+
+more terminology ideas: "processes", "taggers", "importers"
+
+reminder: importer flushes+commits to db and all (required to get Item id so that asses can be made)
+but the window that pops up to edit the tags EDIT (UPDATE queries)
+=> good because can reuse this ui component later too
+
+TODO: no need to pass session to stuff (to lang.py) if global session in database.py
